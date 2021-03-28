@@ -104,6 +104,7 @@ function isGuessCorrect($SecretWord, $GuessedLetter) {
     return $false
 }
 
+# initialize game variables
 # character array from a to z (lowercase)
 $validGuesses = ( -join ((97..122) | ForEach-Object { [char]$_ })).ToCharArray()
 $new_word = getWord # get a new word
@@ -125,6 +126,7 @@ do {
         Write-Host "`n`tThe word was: $new_word"
         $res = Read-Host "`n`tWould you like to play again? (y/n)"
         if ($res -ne "n") {
+            # reset game
             $new_word = getWord
             $guesses = @()
             $badGuesses = 0
