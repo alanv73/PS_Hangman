@@ -104,18 +104,22 @@ function isGuessCorrect($SecretWord, $GuessedLetter) {
     return $false
 }
 
-
-$new_word = getWord
-$guesses = @()
-$badGuesses = 0
+# character array from a to z (lowercase)
+$validGuesses = ( -join ((97..122) | ForEach-Object { [char]$_ })).ToCharArray()
+$new_word = getWord # get a new word
+$guesses = @() # clear the array of guessed letters
+$badGuesses = 0 # reset number of incorrect guesses
 
 do {
     printTitle
     printGallows($badGuesses)
     printGuessedLetters($guesses)
 
+    # convert the secret word to blanks
+    # then fill the blanks that the user has guessed correctly
     $progress = getWordProgress -SecretWord $new_word -GuessedLetters $guesses
     
+    # check to see if the user got all of the letters yet
     if (($progress -replace " ", "") -eq $new_word) {
         Write-Host "`n`n`tYou Win!"
         Write-Host "`n`tThe word was: $new_word"
@@ -127,12 +131,28 @@ do {
         }
         continue
     }
-    
+
     Write-Host "`n`n`t`t$progress"
-    $guess = Read-Host "`n`n`tGuess a letter"
+    
+    # get the next guess from the user
+    do {
+        
+        $guess = (Read-Host "`n`n`tGuess a letter").ToLower()
 
-    if ($guess -eq "quit") { exit }
+        if ($guess -eq "quit") { exit }
 
+        # validate the user input
+        if ($guess.Length -gt 1) {
+            Write-Host "`n`tPlease enter a single letter only"
+            $guess = $null
+        } elseif ( $validGuesses -notcontains $guess) {
+            Write-Host "`n`tPlease enter a letter between 'a' and 'z'"
+            $guess = $null
+        }
+
+    } while ($null -eq $guess)
+    
+    # count the guesses
     if ($guesses -notcontains $guess) {
         $guesses += $guess
         if ((isGuessCorrect -SecretWord $new_word -GuessedLetter $guess) -ne $true) {
@@ -140,6 +160,7 @@ do {
         }
     }
 
+    # user loses after 6 guesses
     if ($badGuesses -gt 6) {
         Write-Host "`n`n`tSorry you lose."
         Write-Host "`n`n`tThe word was $new_word"
