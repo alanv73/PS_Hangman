@@ -79,22 +79,29 @@ function printGuessedLetters($LetterArray) {
 }
 
 function getWord() {
-    $html = Invoke-RestMethod -Method Get -Uri "https://creativitygames.net/random-word-generator/randomwords/1"
-    $element = '<li id="randomword_1">(?<word>.*)</li>'
-    
-    $res = $html -match $element
-    
-    if ($res -eq $true) {
-        $word = $Matches['word']
-    }
+    $API_BASE_URL = "https://api.api-ninjas.com/v1"
 
-    return $word -replace " ", ""
+    $url = "$API_BASE_URL/randomword"
+
+    $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+    $headers.Add("X-Api-Key", "XvnUKuPUySl6NYWeTpzygw==XW2KDStBDDWXeM9j")
+    
+    try {
+        $response = Invoke-RestMethod $url -Method Get -Headers $headers
+        $word = $response.word
+
+        return $word
+
+    } catch {
+        Write-Host "`n`tGET Error: $_"
+        exit
+    }
 }
 
 function getWordProgress($SecretWord, $GuessedLetters) {
     return (
         $SecretWord.ToCharArray().forEach( { 
-                if ($GuessedLetters.Contains($_.tostring())) { $_ } else { "_" } 
+                if ($GuessedLetters.Contains($_.tostring())) { $_ } elseif ("- " -match $_) { $_ } else { "_" } 
             }) -join "  "
     )
 }
@@ -121,7 +128,7 @@ do {
     $progress = getWordProgress -SecretWord $new_word -GuessedLetters $guesses
     
     # check to see if the user got all of the letters yet
-    if (($progress -replace " ", "") -eq $new_word) {
+    if (($progress -replace " ", "" ) -eq ($new_word -replace " ", "")) {
         Write-Host "`n`n`tYou Win!"
         Write-Host "`n`tThe word was: $new_word"
         $res = Read-Host "`n`tWould you like to play again? (y/n)"
