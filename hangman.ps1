@@ -88,7 +88,7 @@ function getWord() {
     
     try {
         $response = Invoke-RestMethod $url -Method Get -Headers $headers
-        $word = $response.word
+        $word = $response.word.ToLower()
 
         return $word
 
