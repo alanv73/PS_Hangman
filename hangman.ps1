@@ -111,6 +111,14 @@ function isGuessCorrect($SecretWord, $GuessedLetter) {
     return $false
 }
 
+# initialize powershell window size
+$pshost = Get-Host
+$pswindow = $pshost.UI.RawUI
+$newsize = $pswindow.BufferSize
+$newsize.Width = 50 # Set desired width
+$newsize.Height = 28 # Set desired height
+$pswindow.WindowSize = $newsize
+
 # initialize game variables
 # character array from a to z (lowercase)
 $validGuesses = ( -join ((97..122) | ForEach-Object { [char]$_ })).ToCharArray()
