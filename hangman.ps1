@@ -61,8 +61,8 @@ function printGallows($BadGuesses) {
 
         7 {
             Write-Host "`t`t|      |"
-            Write-Host "`t`t|     \O/"
-            Write-Host "`t`t|      |"
+            Write-Host "`t`t|      O"
+            Write-Host "`t`t|     /|\"
             Write-Host "`t`t|     / \"
         }
     }
