@@ -126,6 +126,19 @@ do {
     # convert the secret word to blanks
     # then fill the blanks that the user has guessed correctly
     $progress = getWordProgress -SecretWord $new_word -GuessedLetters $guesses
+
+    # user loses after 6 guesses
+    if ($badGuesses -gt 6) {
+        Write-Host "`n`n`tSorry you lose."
+        Write-Host "`n`n`tThe word was $new_word"
+        $res = Read-Host "`n`tWould you like to play again? (y/n)"
+        if ($res -ne "n") {
+            $new_word = getWord
+            $guesses = @()
+            $badGuesses = 0
+            continue
+        } else { exit }
+    }
     
     # check to see if the user got all of the letters yet
     if (($progress -replace " ", "" ) -eq ($new_word -replace " ", "")) {
@@ -137,7 +150,7 @@ do {
             $new_word = getWord
             $guesses = @()
             $badGuesses = 0
-        }
+        } else { exit }
         continue
     }
 
@@ -168,20 +181,8 @@ do {
             $badGuesses++ 
         }
     }
-
-    # user loses after 6 guesses
-    if ($badGuesses -gt 6) {
-        Write-Host "`n`n`tSorry you lose."
-        Write-Host "`n`n`tThe word was $new_word"
-        $res = Read-Host "`n`tWould you like to play again? (y/n)"
-        if ($res -ne "n") {
-            $new_word = getWord
-            $guesses = @()
-            $badGuesses = 0
-        }
-    }
     
-} while ($res -ne "n")
+} while ($guess -ne "quit")
 
 
 
