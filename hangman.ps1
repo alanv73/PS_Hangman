@@ -1,80 +1,100 @@
-function printTitle() {
+function printTitle($ScreenWidth) {
     Clear-Host
-    Write-Host "`n`t*******************************"
-    Write-Host "`t******** H A N G M A N ********"
-    Write-Host "`t*******************************"
-    Write-Host "`t***** Type 'quit' to exit *****"
-    Write-Host "`t*******************************`n"
+
+    $title = "*******************************"
+    $padding = Get-Padding -ScreenWidth $ScreenWidth -TextWidth $title.Length
+
+    $title = "`n$padding$title"
+    $title = "$title`n$padding******** H A N G M A N ********"
+    $title = "$title`n$padding*******************************"
+    $title = "$title`n$padding***** Type 'quit' to exit *****"
+    $title = "$title`n$padding*******************************`n"
+
+    Write-Host $title
 }
-function printGallows($BadGuesses) {
-    Write-Host "`n`t`t________"
+
+function printGallows($BadGuesses, $ScreenWidth) {
+    $gallows = "|__________" # full-width base
+    $padding = Get-Padding -ScreenWidth $ScreenWidth -TextWidth $gallows.Length
+
+    $gallows = "`n$padding`________"
 
     switch ($BadGuesses) {
         0 {
-            Write-Host "`t`t|"
-            Write-Host "`t`t|"
-            Write-Host "`t`t|"
-            Write-Host "`t`t|"
+            $gallows = "$gallows`n$padding|"
+            $gallows = "$gallows`n$padding|"
+            $gallows = "$gallows`n$padding|"
+            $gallows = "$gallows`n$padding|"
         }
 
         1 {
-            Write-Host "`t`t|      |"
-            Write-Host "`t`t|"
-            Write-Host "`t`t|"
-            Write-Host "`t`t|"
+            $gallows = "$gallows`n$padding|      |"
+            $gallows = "$gallows`n$padding|"
+            $gallows = "$gallows`n$padding|"
+            $gallows = "$gallows`n$padding|"
         }
 
         2 {
-            Write-Host "`t`t|      |"
-            Write-Host "`t`t|      O"
-            Write-Host "`t`t|"
-            Write-Host "`t`t|"
+            $gallows = "$gallows`n$padding|      |"
+            $gallows = "$gallows`n$padding|      O"
+            $gallows = "$gallows`n$padding|"
+            $gallows = "$gallows`n$padding|"
         }
 
         3 {
-            Write-Host "`t`t|      |"
-            Write-Host "`t`t|      O"
-            Write-Host "`t`t|      |"
-            Write-Host "`t`t|"
+            $gallows = "$gallows`n$padding|      |"
+            $gallows = "$gallows`n$padding|      O"
+            $gallows = "$gallows`n$padding|      |"
+            $gallows = "$gallows`n$padding|"
         }
 
         4 {
-            Write-Host "`t`t|      |"
-            Write-Host "`t`t|     \O"
-            Write-Host "`t`t|      |"
-            Write-Host "`t`t|"
+            $gallows = "$gallows`n$padding|      |"
+            $gallows = "$gallows`n$padding|     \O"
+            $gallows = "$gallows`n$padding|      |"
+            $gallows = "$gallows`n$padding|"
         }
 
         5 {
-            Write-Host "`t`t|      |"
-            Write-Host "`t`t|     \O/"
-            Write-Host "`t`t|      |"
-            Write-Host "`t`t|"
+            $gallows = "$gallows`n$padding|      |"
+            $gallows = "$gallows`n$padding|     \O/"
+            $gallows = "$gallows`n$padding|      |"
+            $gallows = "$gallows`n$padding|"
         }
 
         6 {
-            Write-Host "`t`t|      |"
-            Write-Host "`t`t|     \O/"
-            Write-Host "`t`t|      |"
-            Write-Host "`t`t|     /"
+            $gallows = "$gallows`n$padding|      |"
+            $gallows = "$gallows`n$padding|     \O/"
+            $gallows = "$gallows`n$padding|      |"
+            $gallows = "$gallows`n$padding|     /"
         }
 
         7 {
-            Write-Host "`t`t|      |"
-            Write-Host "`t`t|      O"
-            Write-Host "`t`t|     /|\"
-            Write-Host "`t`t|     / \"
+            $gallows = "$gallows`n$padding|      |"
+            $gallows = "$gallows`n$padding|      O"
+            $gallows = "$gallows`n$padding|     /|\"
+            $gallows = "$gallows`n$padding|     / \"
         }
     }
 
-    Write-Host "`t`t|__________"
+    $gallows = "$gallows`n$padding|__________"
+
+    Write-Host $gallows
 }
 
-function printGuessedLetters($LetterArray) {
-    Write-Host -NoNewLine "`n`tGuessed Letters:`n`n`t"
+function Get-Padding($ScreenWidth, $TextWidth) {
+    $padding_width = [int](($ScreenWidth - $TextWidth) / 2)
+    $padding = (" " * $padding_width)
+    return $padding
+}
+
+function printGuessedLetters($LetterArray, $ScreenWidth) {
+    $guessed_letters = "`n`t`tGuessed Letters:`n`n`t`t"
     $LetterArray.foreach( {
-            Write-Host -NoNewline "$_ "
+            $guessed_letters = "$guessed_letters$_ "
         })
+    
+    Write-Host -NoNewLine $guessed_letters
     Write-Host
 }
 
@@ -127,9 +147,9 @@ $guesses = @() # clear the array of guessed letters
 $badGuesses = 0 # reset number of incorrect guesses
 
 do {
-    printTitle
-    printGallows($badGuesses)
-    printGuessedLetters($guesses)
+    printTitle($newsize.Width)
+    printGallows -BadGuesses $badGuesses -ScreenWidth $newsize.Width
+    printGuessedLetters -LetterArray $guesses -ScreenWidth $newsize.Width
 
     # convert the secret word to blanks
     # then fill the blanks that the user has guessed correctly
@@ -137,9 +157,15 @@ do {
 
     # user loses after 6 guesses
     if ($badGuesses -gt 6) {
-        Write-Host "`n`n`tSorry you lose."
-        Write-Host "`n`n`tThe word was $new_word"
-        $res = Read-Host "`n`tWould you like to play again? (y/n)"
+        $message = "Would you like to play again? (y/n)"
+        $padding = Get-Padding -ScreenWidth $newsize.Width -TextWidth $message.Length
+
+        $message = "`n`n$padding`Sorry you lose."
+        $message = "$message`n`n$padding`The word was $new_word"
+
+        Write-Host $message
+
+        $res = Read-Host "`n$padding`Would you like to play again? (y/n)"
         if ($res -ne "n") {
             $new_word = getWord
             $guesses = @()
@@ -150,9 +176,15 @@ do {
     
     # check to see if the user got all of the letters yet
     if (($progress -replace " ", "" ) -eq ($new_word -replace " ", "")) {
-        Write-Host "`n`n`tYou Win!"
-        Write-Host "`n`tThe word was: $new_word"
-        $res = Read-Host "`n`tWould you like to play again? (y/n)"
+        $message = "Would you like to play again? (y/n)"
+        $padding = Get-Padding -ScreenWidth $newsize.Width -TextWidth $message.Length
+
+        $message = "`n`n$padding`You Win!"
+        $message = "$message`n`n$padding`The word was $new_word"
+
+        Write-Host $message
+
+        $res = Read-Host "`n$padding`Would you like to play again? (y/n)"
         if ($res -ne "n") {
             # reset game
             $new_word = getWord
@@ -162,7 +194,8 @@ do {
         continue
     }
 
-    Write-Host "`n`n`t`t$progress"
+    $padding = Get-Padding -ScreenWidth $newsize.Width -TextWidth ((($new_word.Length * 2) - 2) + $new_word.Length)
+    Write-Host "`n`n$padding$progress"
     
     # get the next guess from the user
     do {
@@ -173,10 +206,14 @@ do {
 
         # validate the user input
         if ($guess.Length -gt 1) {
-            Write-Host "`n`tPlease enter a single letter only"
+            $message = "Please enter a single letter only"
+            $padding = Get-Padding -ScreenWidth $newsize.Width -TextWidth $message.Length
+            Write-Host "`n$padding$message"
             $guess = $null
         } elseif ( $validGuesses -notcontains $guess) {
-            Write-Host "`n`tPlease enter a letter between 'a' and 'z'"
+            $message = "Please enter a letter between 'a' and 'z'"
+            $padding = Get-Padding -ScreenWidth $newsize.Width -TextWidth $message.Length
+            Write-Host "`n$padding$message"
             $guess = $null
         }
 
