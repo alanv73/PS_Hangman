@@ -89,12 +89,14 @@ function Get-Padding($ScreenWidth, $TextWidth) {
 }
 
 function printGuessedLetters($LetterArray, $ScreenWidth) {
-    $guessed_letters = "`n`t`tGuessed Letters:`n`n`t`t"
+    $position = Get-Padding -ScreenWidth $current_width -TextWidth 40
+
+    $guessed_letters = "`n$position`Guessed Letters:`n`n$position"
     $LetterArray.foreach( {
             $guessed_letters = "$guessed_letters$_ "
         })
     
-    Write-Host -NoNewLine $guessed_letters
+    Write-Host $guessed_letters
     Write-Host
 }
 
@@ -140,6 +142,13 @@ $newsize.Height = 30 # Set desired height
 
 if ($null -ne $pswindow.WindowSize) {
     $pswindow.WindowSize = $newsize
+    $pshost = Get-Host
+    $pswindow = $pshost.UI.RawUI
+    $current_width = $pswindow.WindowSize.Width
+} else {
+    $pshost = Get-Host
+    $pswindow = $pshost.UI.RawUI
+    $current_width = $pswindow.BufferSize.Width
 }
 
 # initialize game variables
@@ -150,9 +159,9 @@ $guesses = @() # clear the array of guessed letters
 $badGuesses = 0 # reset number of incorrect guesses
 
 do {
-    printTitle($newsize.Width)
-    printGallows -BadGuesses $badGuesses -ScreenWidth $newsize.Width
-    printGuessedLetters -LetterArray $guesses -ScreenWidth $newsize.Width
+    printTitle($current_width)
+    printGallows -BadGuesses $badGuesses -ScreenWidth $current_width
+    printGuessedLetters -LetterArray $guesses -ScreenWidth $current_width
 
     # convert the secret word to blanks
     # then fill the blanks that the user has guessed correctly
@@ -161,7 +170,7 @@ do {
     # user loses after 6 guesses
     if ($badGuesses -gt 6) {
         $message = "Would you like to play again? (y/n)"
-        $padding = Get-Padding -ScreenWidth $newsize.Width -TextWidth $message.Length
+        $padding = Get-Padding -ScreenWidth $current_width -TextWidth $message.Length
 
         $message = "`n`n$padding`Sorry you lose."
         $message = "$message`n`n$padding`The word was $new_word"
@@ -180,7 +189,7 @@ do {
     # check to see if the user got all of the letters yet
     if (($progress -replace " ", "" ) -eq ($new_word -replace " ", "")) {
         $message = "Would you like to play again? (y/n)"
-        $padding = Get-Padding -ScreenWidth $newsize.Width -TextWidth $message.Length
+        $padding = Get-Padding -ScreenWidth $current_width -TextWidth $message.Length
 
         $message = "`n`n$padding`You Win!"
         $message = "$message`n`n$padding`The word was $new_word"
@@ -197,25 +206,25 @@ do {
         continue
     }
 
-    $padding = Get-Padding -ScreenWidth $newsize.Width -TextWidth ((($new_word.Length * 2) - 2) + $new_word.Length)
+    $padding = Get-Padding -ScreenWidth $current_width -TextWidth ((($new_word.Length * 2) - 2) + $new_word.Length)
     Write-Host "`n`n$padding$progress"
     
     # get the next guess from the user
     do {
-        
-        $guess = (Read-Host "`n`n`tGuess a letter").ToLower()
+        $position = Get-Padding -ScreenWidth $current_width -TextWidth 40
+        $guess = (Read-Host "`n`n$position`Guess a letter").ToLower()
 
         if ($guess -eq "quit") { exit }
 
         # validate the user input
         if ($guess.Length -gt 1) {
             $message = "Please enter a single letter only"
-            $padding = Get-Padding -ScreenWidth $newsize.Width -TextWidth $message.Length
+            $padding = Get-Padding -ScreenWidth $current_width -TextWidth $message.Length
             Write-Host "`n$padding$message"
             $guess = $null
         } elseif ( $validGuesses -notcontains $guess) {
             $message = "Please enter a letter between 'a' and 'z'"
-            $padding = Get-Padding -ScreenWidth $newsize.Width -TextWidth $message.Length
+            $padding = Get-Padding -ScreenWidth $current_width -TextWidth $message.Length
             Write-Host "`n$padding$message"
             $guess = $null
         }
