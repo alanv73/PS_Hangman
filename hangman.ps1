@@ -137,7 +137,10 @@ $pswindow = $pshost.UI.RawUI
 $newsize = $pswindow.BufferSize
 $newsize.Width = 60 # Set desired width
 $newsize.Height = 30 # Set desired height
-$pswindow.WindowSize = $newsize
+
+if ($null -ne $pswindow.WindowSize) {
+    $pswindow.WindowSize = $newsize
+}
 
 # initialize game variables
 # character array from a to z (lowercase)
