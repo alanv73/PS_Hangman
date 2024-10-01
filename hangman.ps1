@@ -1,14 +1,15 @@
 function printTitle($ScreenWidth) {
     Clear-Host
 
-    $title = "*******************************"
+    $title = "*****************************************************"
     $padding = Get-Padding -ScreenWidth $ScreenWidth -TextWidth $title.Length
 
     $title = "`n$padding$title"
-    $title = "$title`n$padding******** H A N G M A N ********"
-    $title = "$title`n$padding*******************************"
-    $title = "$title`n$padding***** Type 'quit' to exit *****"
-    $title = "$title`n$padding*******************************`n"
+    $title = "$title`n$padding******** P O W E R S H E L L - H A N G M A N ********"
+    $title = "$title`n$padding***************    by Alan Van Art    ***************"
+    $title = "$title`n$padding*****************************************************"
+    $title = "$title`n$padding**************** Type 'quit' to exit ****************"
+    $title = "$title`n$padding*****************************************************`n"
 
     Write-Host $title
 }
@@ -138,7 +139,7 @@ $pshost = Get-Host
 $pswindow = $pshost.UI.RawUI
 $newsize = $pswindow.BufferSize
 $newsize.Width = 60 # Set desired width
-$newsize.Height = 30 # Set desired height
+$newsize.Height = 32 # Set desired height
 
 if ($null -ne $pswindow.WindowSize) {
     $pswindow.WindowSize = $newsize
