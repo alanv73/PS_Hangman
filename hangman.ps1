@@ -174,7 +174,9 @@ do {
         $padding = Get-Padding -ScreenWidth $current_width -TextWidth $message.Length
 
         $message = "`n`n$padding`Sorry you lose."
-        $message = "$message`n`n$padding`The word was $new_word"
+        Write-Host $message -ForegroundColor Red
+
+        $message = "`n$padding`The word was $new_word"
 
         Write-Host $message
 
@@ -193,7 +195,9 @@ do {
         $padding = Get-Padding -ScreenWidth $current_width -TextWidth $message.Length
 
         $message = "`n`n$padding`You Win!"
-        $message = "$message`n`n$padding`The word was $new_word"
+        Write-Host $message -ForegroundColor Yellow
+
+        $message = "`n$padding`The word was $new_word"
 
         Write-Host $message
 
