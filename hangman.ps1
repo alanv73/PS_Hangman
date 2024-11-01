@@ -197,6 +197,11 @@ do {
         $message = "`n`n$padding`You Win!"
         Write-Host $message -ForegroundColor Yellow
 
+        if ($badGuesses -eq 0) {
+            $message = "$padding`Perfect Score!"
+            Write-Host $message -ForegroundColor Cyan
+        }
+
         $message = "`n$padding`The word was $new_word"
 
         Write-Host $message
