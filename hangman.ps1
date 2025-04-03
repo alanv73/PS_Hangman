@@ -137,8 +137,8 @@ function isGuessCorrect($SecretWord, $GuessedLetter) {
 # initialize powershell console window size
 $pshost = Get-Host
 $pswindow = $pshost.UI.RawUI
-$newsize = $pswindow.BufferSize
-$newsize.Width = 60 # Set desired width
+$newsize = $pswindow.WindowSize # $pswindow.BufferSize
+$newsize.Width = 120 # Set desired width
 $newsize.Height = 32 # Set desired height
 
 if ($null -ne $pswindow.WindowSize) {
@@ -147,6 +147,7 @@ if ($null -ne $pswindow.WindowSize) {
     $pswindow = $pshost.UI.RawUI
     $current_width = $pswindow.WindowSize.Width
 } else {
+    Exit
     $pshost = Get-Host
     $pswindow = $pshost.UI.RawUI
     $current_width = $pswindow.BufferSize.Width
